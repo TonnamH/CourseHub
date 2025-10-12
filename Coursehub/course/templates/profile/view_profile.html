@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body text-center">
+          {% if user_profile.profile_picture %}
+            <img src="{{ user_profile.profile_picture.url }}" 
+                 class="rounded-circle mb-3"
+                 alt="Profile Picture"
+                 style="max-width: 300px; max-height: 300px; width: 100%; height: auto; object-fit: cover;">
+          {% else %}
+            <img src="https://placehold.co/300"
+                 class="rounded-circle mb-3"
+                 alt="Profile Picture"
+                 style="max-width: 300px; max-height: 300px; width: 100%; height: auto; object-fit: cover;">
+          {% endif %}
+
+          <h4 class="card-title mt-2">{{ user_profile.user.first_name|default:user_profile.user.username }}</h4>
+          <p class="text-muted">{{ user_profile.user.email }}</p>
+          <p><span class="badge bg-primary text-capitalize">{{ user_profile.role }}</span></p>
+        </div>
+      </div>
+
+      <div class="list-group mt-4">
+        <a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action">Dashboard</a>
+        <a href="#" class="list-group-item list-group-item-action active">View Profile</a>
+        <a href="{% url 'edit_profile' %}" class="list-group-item list-group-item-action">Edit Profile</a>
+        <a href="{% url 'change_password' %}" class="list-group-item list-group-item-action">Change Password</a>
+        <a href="{% url 'logout' %}" class="list-group-item list-group-item-action text-danger">Logout</a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h4 class="card-title mb-4">Profile Information</h4>
+
+          <!-- Shared fields -->
+          <div class="row mb-3">
+            <div class="col-sm-4 fw-bold">Username:</div>
+            <div class="col-sm-8">{{ user_profile.user.username }}</div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-sm-4 fw-bold">Email:</div>
+            <div class="col-sm-8">{{ user_profile.user.email }}</div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-sm-4 fw-bold">Full Name:</div>
+            <div class="col-sm-8">{{ user_profile.user.first_name }} {{ user_profile.user.last_name }}</div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-sm-4 fw-bold">Bio:</div>
+            <div class="col-sm-8">
+              {% if user_profile.bio %}
+                {{ user_profile.bio }}
+              {% else %}
+                <span class="text-muted">No bio provided.</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-sm-4 fw-bold">Member Since:</div>
+            <div class="col-sm-8">
+              {{ user_profile.created_at|date:"F j, Y" }}
+            </div>
+          </div>
+
+          {% if user_profile.role == 'student' and user_profile.studentprofile %}
+            <hr>
+            <h5 class="mb-3">Student Information</h5>
+            <div class="row mb-3">
+              <div class="col-sm-4 fw-bold">Major:</div>
+              <div class="col-sm-8">{{ user_profile.studentprofile.major }}</div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-sm-4 fw-bold">Year of Study:</div>
+              <div class="col-sm-8">{{ user_profile.studentprofile.year_of_study }}</div>
+            </div>
+
+          {% elif user_profile.role == 'instructor' and user_profile.instructorprofile %}
+            <hr>
+            <h5 class="mb-3">Instructor Information</h5>
+            <div class="row mb-3">
+              <div class="col-sm-4 fw-bold">Department:</div>
+              <div class="col-sm-8">{{ user_profile.instructorprofile.department }}</div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-sm-4 fw-bold">Expertise:</div>
+              <div class="col-sm-8">{{ user_profile.instructorprofile.expertise }}</div>
+            </div>
+          {% endif %}
+
+          <div class="mt-4">
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

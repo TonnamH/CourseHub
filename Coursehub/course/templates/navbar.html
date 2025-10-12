@@ -1,0 +1,62 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="{% url 'home' %}">CourseHub</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+      aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Left -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'course_list' %}">Courses</a>
+        </li>
+      </ul>
+
+      <!-- Right -->
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+        {% if user.is_authenticated %}
+          <!-- Profile dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+              {% if user_profile.profile_picture %}
+              <img src="{{ user_profile.profile_picture.url }}" 
+                     alt="Profile" class="rounded-circle me-2" width="30" height="30">
+              {% else %}
+                <!-- Default placeholder image -->
+                <img src="https://placehold.co/30"
+                     alt="Profile" class="rounded-circle me-2" width="30" height="30">
+              {% endif %}
+
+
+              {{ user.username }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'view_profile' %}">My Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'change_password' %}">Change Password</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
+
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'register' %}">Register</a>
+          </li>
+        {% endif %}
+      </ul>
+
+      <!-- Optional search -->
+      <form class="d-flex ms-3" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search courses" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</nav>

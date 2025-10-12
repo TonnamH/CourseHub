@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+  .dashboard-wrapper {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .dashboard-header {
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+  }
+
+  .course-card img {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .course-card {
+    border-radius: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  }
+
+  .stats-card .card {
+    border-radius: 10px;
+  }
+</style>
+
+<div class="dashboard-wrapper mt-4 mb-5">
+
+  <!-- Greeting -->
+  <div class="dashboard-header">
+    <h2>Welcome back, {{ user.first_name|default:user.username }} 👋</h2>
+    {% if role == "student" %}
+      <p class="text-muted">Here’s what’s happening with your learning today.</p>
+    {% elif role == "instructor" %}
+      <p class="text-muted">Manage your courses and view enrolled students.</p>
+    {% elif role == "admin" %}
+      <p class="text-muted">Here’s an overview of the platform activity.</p>
+    {% endif %}
+  </div>
+
+  <!-- STUDENT DASHBOARD -->
+  {% if role == "student" %}
+    <div class="row mb-4 text-center stats-card">
+      <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h5 class="card-title">Enrolled Courses</h5>
+            <p class="display-6 fw-bold">{{ courses|length }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h5 class="card-title">Completed Courses</h5>
+            <p class="display-6 fw-bold">0</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h5 class="card-title">Active Assignments</h5>
+            <p class="display-6 fw-bold">0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h4 class="mb-3">Your Courses</h4>
+    {% if courses %}
+      <div class="row">
+        {% for course in courses %}
+          <div class="col-md-4 mb-4">
+            <a href="{% url 'course_detail' course.id %}" class="text-decoration-none text-dark">
+              <div class="card shadow-sm h-100 course-card">
+                {% if course.course_image %}
+                  <img src="{{ course.course_image.url }}" alt="Course Image">
+                {% else %}
+                  <img src="https://via.placeholder.com/400x200" alt="Course Image">
+                {% endif %}
+                <div class="card-body">
+                  <h5 class="card-title">{{ course.course_title }}</h5>
+                  <p class="card-text text-muted">{{ course.instructor.user.user.username }}</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center p-5 border rounded shadow-sm bg-light">
+        <h5>No courses yet.</h5>
+        <p class="text-muted">Browse available courses and start learning today!</p>
+        <a href="{% url 'course_list' %}" class="btn btn-primary">Explore Courses</a>
+      </div>
+    {% endif %}
+  {% endif %}
+
+  <!-- INSTRUCTOR DASHBOARD -->
+  {% if role == "instructor" %}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="mb-0">Your Courses</h4>
+      <a href="{% url 'create_course' %}" class="btn btn-success">Create Course</a>
+    </div>
+    
+    {% if courses %}
+      <div class="row">
+        {% for course in courses %}
+          <div class="col-md-4 mb-4">
+            <a href="{% url 'course_detail' course.id %}" class="text-decoration-none text-dark">
+              <div class="card shadow-sm h-100 course-card">
+                {% if course.course_image %}
+                  <img src="{{ course.course_image.url }}" alt="Course Image">
+                {% else %}
+                  <img src="https://via.placeholder.com/400x200" alt="Course Image">
+                {% endif %}
+                <div class="card-body">
+                  <h5 class="card-title">{{ course.course_title }}</h5>
+                  <p class="card-text text-muted">{{ course.category }}</p>
+                  <span class="badge bg-success">Active</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center p-5 border rounded shadow-sm bg-light">
+        <h5>No courses yet.</h5>
+        <p class="text-muted">Create your first course and start teaching.</p>
+        <a href="{% url 'create_course' %}" class="btn btn-primary">Create Course</a>
+      </div>
+    {% endif %}
+  {% endif %}
+
+  <!-- ADMIN DASHBOARD -->
+  {% if role == "admin" %}
+    <div class="row text-center stats-card">
+      <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h5 class="card-title">Total Users</h5>
+            <p class="display-6 fw-bold">{{ total_users }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h5 class="card-title">Total Courses</h5>
+            <p class="display-6 fw-bold">{{ total_courses }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h5 class="card-title">Total Enrollments</h5>
+            <p class="display-6 fw-bold">{{ total_enrollments }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

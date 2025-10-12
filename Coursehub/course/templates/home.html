@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Hero / Banner Section -->
+<div class="bg-light py-5 mb-5 text-center" style="background: url('https://placehold.co/400x200') center/cover no-repeat;">
+    <div class="container py-5 text-white bg-dark bg-opacity-50 rounded">
+        <h1 class="display-4 fw-bold">Welcome to CourseHub</h1>
+        <p class="lead">Learn, teach, and grow — all in one place.</p>
+        <a href="{% url 'course_list' %}" class="btn btn-primary btn-lg mt-3">Browse Courses</a>
+    </div>
+</div>
+
+<!-- Featured Courses -->
+<div class="container mb-5">
+    <h2 class="mb-4 text-center">Featured Courses</h2>
+    <div class="row">
+        {% for course in courses %}
+        <div class="col-md-3 mb-4">
+            <a href="{% url 'course_detail' course.id %}" class="text-decoration-none text-dark"> 
+                <div class="card h-100 shadow-sm">
+                    {% if course.course_image %}
+                        <img src="{{ course.course_image.url }}" class="card-img-top featured-course-img" alt="Course Image">
+                    {% else %}
+                        <img src="https://placehold.co/600x400" class="card-img-top featured-course-img" alt="Course Image">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course.course_title }}</h5>
+                        <p class="card-text text-truncate" style="max-height: 60px;">{{ course.description }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- About / Why Choose Us Section -->
+<div class="bg-light py-5 mb-5">
+    <div class="container text-center">
+        <h2 class="mb-4">Why Choose CourseHub?</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-3">
+                <img src="https://placehold.co/200"
+                     class="mb-3" 
+                     alt="Expert Instructors"
+                     style="max-width: 200px; max-height: 200px; object-fit: contain;">
+                <h5>Expert Instructors</h5>
+                <p>Learn from industry professionals and passionate teachers.</p>
+            </div>
+            <div class="col-md-3">
+                <img src="https://placehold.co/200"
+                     class="mb-3" 
+                     alt="Flexible Learning"
+                     style="max-width: 200px; max-height: 200px; object-fit: contain;">
+                <h5>Flexible Learning</h5>
+                <p>Study anytime, anywhere, and at your own pace.</p>
+            </div>
+            <div class="col-md-3">
+                <img src="https://placehold.co/200"
+                     class="mb-3" 
+                     alt="Certificates"
+                     style="max-width: 200px; max-height: 200px; object-fit: contain;">
+                <h5>Get Certified</h5>
+                <p>Earn certificates to boost your career and confidence.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if user.is_authenticated %}
+{% else %}
+<!-- Call to Action -->
+<div class="py-5 text-center bg-primary text-white">
+    <h2>Ready to start your learning journey?</h2>
+    <p class="lead">Join thousands of students today and unlock your potential.</p>
+    <a href="{% url 'register' %}" class="btn btn-light btn-lg mt-3">Sign Up Now</a>
+</div>
+{% endif %}
+
+{% endblock %}
