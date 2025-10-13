@@ -1,17 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
-from .forms import UserRegisterForm, ProfileForm, StudentProfileForm, InstructorProfileForm, CourseForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm, AuthenticationForm
+from .forms import UserRegisterForm, ProfileForm, StudentProfileForm, InstructorProfileForm, CourseForm, AnnouncementForm, CourseContentForm
 from django.contrib import messages
 from .models import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+
 
 def home(request):
     user_profile = Users.objects.get(user=request.user) if request.user.is_authenticated else None
     courses = Courses.objects.all()[:4]
     return render(request, 'home.html', {'courses': courses, 'user_profile': user_profile})   
-
-
 
 def user_dashboard(request):
     if not request.user.is_authenticated:
@@ -50,7 +50,6 @@ def user_dashboard(request):
 
     return render(request, 'dashboard.html', context)
 
-
 def course_list(request):
     courses = Courses.objects.all().order_by('id')
     paginator = Paginator(courses, 8)
@@ -74,7 +73,6 @@ def course_list(request):
         'user_profile': user_profile,
     }
     return render(request, 'course_list.html', context)
-
 
 def course_detail(request, course_id):
     course = Courses.objects.get(pk=course_id)
@@ -104,28 +102,24 @@ def course_detail(request, course_id):
     }
     return render(request, 'course_detail.html', context)
 
-
 def user_login(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
             login(request, user)
+            messages.success(request, f"Welcome back, {user.username}!")
             return redirect('home')
         else:
-            messages.error(request, 'Invalid username or password.')
-            return redirect('login')
-    return render(request, 'login.html')
+            messages.error(request, "Invalid username or password.")
+    else:
+        form = AuthenticationForm()
 
-
+    return render(request, 'user_section/login.html', {'form': form})
 
 def user_logout(request):
     logout(request)
     return redirect('home')
-
-
-
 
 def user_register(request):
     form = UserRegisterForm()
@@ -145,9 +139,7 @@ def user_register(request):
             messages.success(request, 'Registration successful!')
             return redirect('dashboard')
             
-    return render(request, 'register.html', {'form': form})
-
-
+    return render(request, 'user_section/register.html', {'form': form})
 
 def view_profile(request):
     user_profile = get_object_or_404(Users, user=request.user)
@@ -166,8 +158,6 @@ def view_profile(request):
         'instructor_profile': instructor_profile,
     }
     return render(request, 'profile/view_profile.html', context)
-
-
 
 def edit_profile(request):
     try:
@@ -214,8 +204,6 @@ def edit_profile(request):
 
     return render(request, 'profile/edit_profile.html', context)
 
-
-
 def create_course(request):
     user_profile = Users.objects.get(user=request.user)
     if not hasattr(request.user, 'users') or request.user.users.role != 'instructor':
@@ -235,9 +223,7 @@ def create_course(request):
     else:
         form = CourseForm()
 
-    return render(request, 'create_course.html', {'form': form, 'user_profile': user_profile})
-
-
+    return render(request, 'instructor/create_course.html', {'form': form, 'user_profile': user_profile})
 
 def change_password(request):
     if not request.user.is_authenticated:
@@ -255,9 +241,7 @@ def change_password(request):
     else:
         form = PasswordChangeForm(user=request.user)
 
-    return render(request, 'change_password.html', {'form': form})
-
-
+    return render(request, 'user_section/change_password.html', {'form': form})
 
 def enroll_course(request, course_id):
     if not request.user.is_authenticated:
@@ -281,8 +265,6 @@ def enroll_course(request, course_id):
     messages.success(request, f"You have successfully enrolled in {course.course_title}!")
     return redirect('course_detail', course_id=course_id)
 
-
-
 def unenroll_course(request, course_id):
     if not request.user.is_authenticated:
         return redirect('login')
@@ -304,8 +286,6 @@ def unenroll_course(request, course_id):
     messages.success(request, f"You have unenrolled from {course.course_title}.")
     return redirect('course_detail', course_id=course_id)
 
-
-
 def edit_course(request, course_id):
     user_profile = Users.objects.get(user=request.user)
     if user_profile.role != 'instructor':
@@ -324,9 +304,7 @@ def edit_course(request, course_id):
     else:
         form = CourseForm(instance=course)
 
-    return render(request, 'edit_course.html', {'form': form, 'course': course, 'user_profile': user_profile})
-
-
+    return render(request, 'instructor/edit_course.html', {'form': form, 'course': course, 'user_profile': user_profile})
 
 def delete_course(request, course_id):
     user_profile = Users.objects.get(user=request.user)
@@ -337,14 +315,9 @@ def delete_course(request, course_id):
     instructor_profile = InstructorProfile.objects.get(user=user_profile)
     course = get_object_or_404(Courses, pk=course_id, instructor=instructor_profile)
 
-    if request.method == 'POST':
-        course.delete()
-        messages.success(request, "Course deleted successfully!")
-        return redirect('dashboard')
-
-    return render(request, 'delete_course.html', {'course': course, 'user_profile': user_profile})
-
-
+    course.delete()
+    messages.success(request, "Course deleted successfully!")
+    return redirect('dashboard')
 
 def enrolled_students(request, course_id):
     user_profile = Users.objects.get(user=request.user)
@@ -363,5 +336,221 @@ def enrolled_students(request, course_id):
         'students': students,
         'user_profile': user_profile,
     }
-    return render(request, 'enrolled_student.html', context)
+    return render(request, 'instructor/enrolled_student.html', context)
 
+def add_content(request, course_id):
+    user_profile = Users.objects.get(user=request.user)
+
+    if user_profile.role != 'instructor':
+        messages.error(request, "Only instructors can add course content.")
+        return redirect('dashboard')
+
+    instructor_profile = InstructorProfile.objects.get(user=user_profile)
+    course = get_object_or_404(Courses, pk=course_id, instructor=instructor_profile)
+
+    if request.method == 'POST':
+        form = CourseContentForm(request.POST)
+        if form.is_valid():
+            content = form.save(commit=False)
+            content.course = course
+            content.save()
+            messages.success(request, "Content added successfully!")
+            return redirect('course_detail', course_id=course.id)
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = CourseContentForm()
+
+    return render(request, 'instructor/add_content.html', {
+        'form': form,
+        'course': course,
+        'user_profile': user_profile
+    })
+
+def edit_content(request, content_id):
+    user_profile = Users.objects.get(user=request.user)
+
+    if user_profile.role != 'instructor':
+        messages.error(request, "Only instructors can edit course content.")
+        return redirect('dashboard')
+
+    instructor_profile = InstructorProfile.objects.get(user=user_profile)
+    content = get_object_or_404(CourseContent, pk=content_id)
+    course = content.course
+
+    if course.instructor != instructor_profile:
+        messages.error(request, "You do not have permission to edit this content.")
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        form = CourseContentForm(request.POST, instance=content)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Content updated successfully!")
+            return redirect('course_detail', course_id=course.id)
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = CourseContentForm(instance=content)
+
+    return render(request, 'instructor/edit_content.html', {
+        'form': form,
+        'course': course,
+        'user_profile': user_profile,
+        'content': content
+    })
+
+def delete_content(request, content_id):
+    user_profile = Users.objects.get(user=request.user)
+
+    if user_profile.role != 'instructor':
+        messages.error(request, "Only instructors can delete course content.")
+        return redirect('dashboard')
+
+    instructor_profile = InstructorProfile.objects.get(user=user_profile)
+    content = get_object_or_404(CourseContent, pk=content_id)
+    course = content.course
+
+    if course.instructor != instructor_profile:
+        messages.error(request, "You do not have permission to delete this content.")
+        return redirect('dashboard')
+
+    content.delete()
+    messages.success(request, "Content deleted successfully!")
+    return redirect('course_detail', course_id=course.id)
+
+def add_announcement(request, course_id):
+    user_profile = Users.objects.get(user=request.user)
+
+    if user_profile.role != 'instructor':
+        messages.error(request, "Only instructors can post announcements.")
+        return redirect('dashboard')
+
+    instructor_profile = InstructorProfile.objects.get(user=user_profile)
+    course = get_object_or_404(Courses, pk=course_id, instructor=instructor_profile)
+
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST)
+        if form.is_valid():
+            announcement = form.save(commit=False)
+            announcement.course = course
+            announcement.save()
+            messages.success(request, "Announcement posted successfully!")
+            return redirect('course_detail', course_id=course.id)
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = AnnouncementForm()
+
+    return render(request, 'instructor/add_announcement.html', {'form': form, 'course': course, 'user_profile': user_profile })
+
+def edit_announcement(request, announcement_id):
+    user_profile = Users.objects.get(user=request.user)
+
+    if user_profile.role != 'instructor':
+        messages.error(request, "Only instructors can edit announcements.")
+        return redirect('dashboard')
+
+    instructor_profile = InstructorProfile.objects.get(user=user_profile)
+    announcement = get_object_or_404(Announcements, pk=announcement_id)
+    course = announcement.course
+
+    if course.instructor != instructor_profile:
+        messages.error(request, "You do not have permission to edit this announcement.")
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST, instance=announcement)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Announcement updated successfully!")
+            return redirect('course_detail', course_id=course.id)
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = AnnouncementForm(instance=announcement)
+
+    return render(request, 'instructor/edit_announcement.html', {
+        'form': form,
+        'course': course,
+        'user_profile': user_profile,
+        'announcement': announcement
+    })
+
+def delete_announcement(request, announcement_id):
+    user_profile = Users.objects.get(user=request.user)
+
+    if user_profile.role != 'instructor':
+        messages.error(request, "Only instructors can delete announcements.")
+        return redirect('dashboard')
+
+    instructor_profile = InstructorProfile.objects.get(user=user_profile)
+    announcement = get_object_or_404(Announcements, pk=announcement_id)
+    course = announcement.course
+
+    if course.instructor != instructor_profile:
+        messages.error(request, "You do not have permission to delete this announcement.")
+        return redirect('dashboard')
+
+    announcement.delete()
+    messages.success(request, "Announcement deleted successfully!")
+    return redirect('course_detail', course_id=course.id)
+
+def user_list(request):
+    user_profile = Users.objects.get(user=request.user)
+    if user_profile.role != 'admin':
+        messages.error(request, "Only admins can view the user list.")
+        return redirect('dashboard')
+
+    users = Users.objects.select_related('user').all()
+
+    context = {
+        'users': users,
+        'user_profile': user_profile,
+    }
+    return render(request, 'admin/user_list.html', context)
+
+def edit_user(request, user_id):
+    admin_profile = Users.objects.get(user=request.user)
+    if admin_profile.role != 'admin':
+        messages.error(request, "Only admins can edit users.")
+        return redirect('dashboard')
+
+    user_to_edit = get_object_or_404(Users, pk=user_id)
+    user_form = UserRegisterForm(instance=user_to_edit.user)
+    profile_form = ProfileForm(instance=user_to_edit)
+
+    if user_to_edit.role == 'student':
+        sub_form = StudentProfileForm(instance=getattr(user_to_edit, 'studentprofile', None))
+    elif user_to_edit.role == 'instructor':
+        sub_form = InstructorProfileForm(instance=getattr(user_to_edit, 'instructorprofile', None))
+    else:
+        sub_form = None
+
+    if request.method == 'POST':
+        user_form = UserRegisterForm(request.POST, instance=user_to_edit.user)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=user_to_edit)
+
+        if user_to_edit.role == 'student':
+            sub_form = StudentProfileForm(request.POST, instance=getattr(user_to_edit, 'studentprofile', None))
+        elif user_to_edit.role == 'instructor':
+            sub_form = InstructorProfileForm(request.POST, instance=getattr(user_to_edit, 'instructorprofile', None))
+
+        if user_form.is_valid() and profile_form.is_valid() and (sub_form is None or sub_form.is_valid()):
+            user_form.save()
+            profile_form.save()
+            if sub_form:
+                sub_form.save()
+            messages.success(request, "User updated successfully!")
+            return redirect('user_list')
+        else:
+            messages.error(request, "Please correct the errors below.")
+
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'sub_form': sub_form,
+        'user_to_edit': user_to_edit,
+        'admin_profile': admin_profile,
+    }
+    return render(request, 'admin/edit_user.html', context)

@@ -1,40 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
 {% block content %}
-
-<style>
-  .dashboard-wrapper {
-    max-width: 1500px;
-    margin: 0 auto;
-    padding: 0 2rem;
-  }
-
-  .dashboard-header {
-    margin-bottom: 2rem;
-    padding: 0 1rem;
-  }
-
-  .course-card img {
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    height: 200px;
-    width: 100%;
-    object-fit: cover;
-  }
-
-  .course-card {
-    border-radius: 10px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .course-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-  }
-
-  .stats-card .card {
-    border-radius: 10px;
-  }
-</style>
 
 <div class="dashboard-wrapper mt-4 mb-5">
 
@@ -52,7 +22,7 @@
 
   <!-- STUDENT DASHBOARD -->
   {% if role == "student" %}
-    <div class="row mb-4 text-center stats-card">
+    <div class="row mb-4 justify-content-center text-center stats-card">
       <div class="col-md-4 mb-3">
         <div class="card shadow-sm border-0">
           <div class="card-body">
@@ -61,46 +31,31 @@
           </div>
         </div>
       </div>
-      <div class="col-md-4 mb-3">
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <h5 class="card-title">Completed Courses</h5>
-            <p class="display-6 fw-bold">0</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4 mb-3">
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <h5 class="card-title">Active Assignments</h5>
-            <p class="display-6 fw-bold">0</p>
-          </div>
-        </div>
-      </div>
     </div>
 
     <h4 class="mb-3">Your Courses</h4>
     {% if courses %}
-      <div class="row">
+      <div class="row mb-4">
         {% for course in courses %}
-          <div class="col-md-4 mb-4">
-            <a href="{% url 'course_detail' course.id %}" class="text-decoration-none text-dark">
-              <div class="card shadow-sm h-100 course-card">
+          <div class="col-md-4 mb-4 d-flex justify-content-center">
+            <a href="{% url 'course_detail' course.id %}" class="course-link">
+              <div class="course-card">
                 {% if course.course_image %}
                   <img src="{{ course.course_image.url }}" alt="Course Image">
                 {% else %}
-                  <img src="https://placehold.co/400" alt="Course Image">
+                  <img src="https://placehold.co/400x200" alt="Course Image">
                 {% endif %}
                 <div class="card-body">
-                  <h5 class="card-title">{{ course.course_title }}</h5>
-                  <p class="text-muted">{{ course.description|truncatewords:15 }}</p>
-                  <p class="card-text text-muted">Instructor: {{ course.instructor.user.user.first_name }} {{ course.instructor.user.user.last_name }}</p>
+                  <h5>{{ course.course_title }}</h5>
+                  <p>{{ course.description|truncatewords:15 }}</p>
+                  <p><small>Instructor: {{ course.instructor.user.user.first_name }} {{ course.instructor.user.user.last_name }}</small></p>
                 </div>
               </div>
             </a>
           </div>
         {% endfor %}
       </div>
+
     {% else %}
       <div class="text-center p-5 border rounded shadow-sm bg-light">
         <h5>No courses yet.</h5>
@@ -118,27 +73,27 @@
     </div>
     
     {% if courses %}
-      <div class="row">
+      <div class="row mb-4">
         {% for course in courses %}
-          <div class="col-md-4 mb-4">
-            <a href="{% url 'course_detail' course.id %}" class="text-decoration-none text-dark">
-              <div class="card shadow-sm h-100 course-card">
+          <div class="col-md-4 mb-4 d-flex justify-content-center">
+            <a href="{% url 'course_detail' course.id %}" class="course-link">
+              <div class="course-card">
                 {% if course.course_image %}
                   <img src="{{ course.course_image.url }}" alt="Course Image">
                 {% else %}
-                  <img src="https://via.placeholder.com/400x200" alt="Course Image">
+                  <img src="https://placehold.co/400x200" alt="Course Image">
                 {% endif %}
                 <div class="card-body">
-                  <h5 class="card-title">{{ course.course_title }}</h5>
-                  <p class="text-muted">{{ course.description|truncatewords:15 }}</p>
-                  <p class="card-text text-muted">{{ course.category }}</p>
-                  <span class="badge bg-success">Active</span>
+                  <h5>{{ course.course_title }}</h5>
+                  <p>{{ course.description|truncatewords:15 }}</p>
+                  <p><small>Instructor: {{ course.instructor.user.user.first_name }} {{ course.instructor.user.user.last_name }}</small></p>
                 </div>
               </div>
             </a>
           </div>
         {% endfor %}
       </div>
+
     {% else %}
       <div class="text-center p-5 border rounded shadow-sm bg-light">
         <h5>No courses yet.</h5>

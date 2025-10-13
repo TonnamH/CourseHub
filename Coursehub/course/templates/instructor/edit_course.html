@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/form_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+
+
+<div class="shared-form-container">
+  <h2>Edit Course Details</h2>
+
+  <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <!-- Course Title -->
+    <div class="mb-3">
+      <label class="form-label">Course Title</label>
+      {{ form.course_title }}
+      {{ form.course_title.errors }}
+    </div>
+
+    <!-- Category -->
+    <div class="mb-3">
+      <label class="form-label">Category</label>
+      {{ form.category }}
+      {{ form.category.errors }}
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      {{ form.description }}
+      {{ form.description.errors }}
+    </div>
+
+    <!-- Course Image -->
+    <div class="mb-3">
+      <label class="form-label">Course Image</label>
+      {{ form.course_image }}
+      {{ form.course_image.errors }}
+
+      {% if course.course_image %}
+        <div class="image-preview">
+          <p class="text-muted mt-2 mb-1">Current Image:</p>
+          <img src="{{ course.course_image.url }}" alt="Course Image">
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/form_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="shared-form-container">
+  <h2>Edit Announcement</h2>
+
+  <form method="POST" class="needs-validation" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <!-- Title -->
+    <div class="mb-3">
+      <label class="form-label">Announcement Title</label>
+      {{ form.title }}
+      {{ form.title.errors }}
+    </div>
+
+    <!-- Message -->
+    <div class="mb-3">
+      <label class="form-label">Message</label>
+      {{ form.message }}
+      {{ form.message.errors }}
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

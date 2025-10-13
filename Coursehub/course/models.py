@@ -12,7 +12,7 @@ class Users(models.Model):
             ('admin', 'Admin'),
         ]
     )
-    bio = models.TextField(blank=True, null=True)
+    bio = models.TextField(max_length=1000, blank=True, null=True)
     profile_picture = models.FileField(upload_to='profiles/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -111,7 +111,7 @@ class Submissions(models.Model):
 class Announcements(models.Model):
     course = models.ForeignKey(Courses, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-    message = models.TextField()
+    message = models.TextField(max_length=300)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

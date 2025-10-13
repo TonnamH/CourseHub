@@ -120,47 +120,63 @@ class InstructorProfileForm(forms.ModelForm):
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Courses
-        fields = ['course_title', 'description', 'category', 'course_image']
+        fields = [
+            'course_title',
+            'description',
+            'category',
+            'course_image',
+        ]
         widgets = {
-            'course_title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter course title'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter course description'}),
-            'category': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter course category'}),
-            'course_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'course_title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter course title',
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Write a short course description...',
+                'rows': 4,
+            }),
+            'category': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'course_image': forms.ClearableFileInput(attrs={
+                'class': 'form-control',
+            }),
+        }
+
+
+class AnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = Announcements
+        fields = ['title', 'message']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter announcement title',
+            }),
+            'message': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Write your announcement message...',
+                'rows': 4,
+            }),
         }
 
 
 
-# class PasswordChangeForm(forms.Form):
-#     old_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Old Password'}), label="")
-#     new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'New Password'}), label="")
-#     new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm New Password'}), label="")
-
-#     def __init__(self, user, *args, **kwargs):
-#         self.user = user
-#         super().__init__(*args, **kwargs)
-
-#     def clean_old_password(self):
-#         old_password = self.cleaned_data.get('old_password')
-#         if not self.user.check_password(old_password):
-#             raise forms.ValidationError("Old password is incorrect.")
-#         return old_password
-
-#     def clean(self):
-#         cleaned_data = super().clean()
-#         new_password1 = cleaned_data.get('new_password1')
-#         new_password2 = cleaned_data.get('new_password2')
-
-#         if new_password1 and new_password2 and new_password1 != new_password2:
-#             raise forms.ValidationError("The two new password fields didn't match.")
-        
-#         return cleaned_data
-
-#     def save(self, commit=True):
-#         new_password = self.cleaned_data.get('new_password1')
-#         self.user.set_password(new_password)
-#         if commit:
-#             self.user.save()
-#         return self.user
-    
-
-
+class CourseContentForm(forms.ModelForm):
+    class Meta:
+        model = CourseContent
+        fields = ['title', 'content_type', 'content_url']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter content title',
+            }),
+            'content_type': forms.Select(attrs={
+                'class': 'form-select',
+            }),
+            'content_url': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Paste content link (e.g. YouTube, Google Drive, etc.)',
+            }),
+        }

@@ -31,3 +31,8 @@ Thumbs.db
 
 # Environment variables
 .env
+
+
+# Course images (uploaded files)
+Coursehub/media/course_images/
+Coursehub/media/profiles/
