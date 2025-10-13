@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+  .edit-course-container {
+    max-width: 1500px;
+    margin: 2rem auto;
+    background: #fff;
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+  }
+
+  .edit-course-container h2 {
+    font-weight: 700;
+    margin-bottom: 1.8rem;
+    color: #1e3a8a;
+    text-align: center;
+  }
+
+  .form-label {
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+
+  .form-control, .form-select {
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  .btn-primary {
+    background-color: #2563eb;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 25px;
+    font-weight: 500;
+  }
+
+  .btn-primary:hover {
+    background-color: #1d4ed8;
+  }
+
+  .btn-secondary {
+    background-color: #6b7280;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 25px;
+    font-weight: 500;
+  }
+
+  .btn-secondary:hover {
+    background-color: #4b5563;
+  }
+
+  .image-preview {
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  .image-preview img {
+    max-width: 100%;
+    max-height: 250px;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  .form-control::placeholder {
+    color: #9ca3af;
+  }
+</style>
+
+<div class="edit-course-container">
+  <h2>Edit Course Details</h2>
+
+  <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <!-- Course Title -->
+    <div class="mb-3">
+      <label class="form-label">Course Title</label>
+      <input type="text" name="course_title" value="{{ course.course_title }}" 
+             class="form-control" placeholder="Enter course title" required>
+      {{ form.course_title.errors }}
+    </div>
+
+    <!-- Category -->
+    <div class="mb-3">
+      <label class="form-label">Category</label>
+      <input type="text" name="category" value="{{ course.category }}"
+             class="form-control" placeholder="Enter course category" required>
+      {{ form.category.errors }}
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea name="description" class="form-control" rows="5"
+                placeholder="Write a short description...">{{ course.description }}</textarea>
+      {{ form.description.errors }}
+    </div>
+
+    <!-- Course Image -->
+    <div class="mb-3">
+      <label class="form-label">Course Image</label>
+      <input type="file" name="course_image" class="form-control">
+      {{ form.course_image.errors }}
+
+      {% if course.course_image %}
+        <div class="image-preview">
+          <p class="text-muted mt-2 mb-1">Current Image:</p>
+          <img src="{{ course.course_image.url }}" alt="Course Image">
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

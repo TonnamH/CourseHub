@@ -40,13 +40,13 @@
 
   <!-- Greeting -->
   <div class="dashboard-header">
-    <h2>Welcome back, {{ user.first_name|default:user.username }} 👋</h2>
+    <h2>Welcome back, {{ user.first_name|default:user.username }} </h2>
     {% if role == "student" %}
-      <p class="text-muted">Here’s what’s happening with your learning today.</p>
+      <p class="text-muted">Here's what's happening with your learning today.</p>
     {% elif role == "instructor" %}
       <p class="text-muted">Manage your courses and view enrolled students.</p>
     {% elif role == "admin" %}
-      <p class="text-muted">Here’s an overview of the platform activity.</p>
+      <p class="text-muted">Here's an overview of the platform activity.</p>
     {% endif %}
   </div>
 
@@ -89,11 +89,12 @@
                 {% if course.course_image %}
                   <img src="{{ course.course_image.url }}" alt="Course Image">
                 {% else %}
-                  <img src="https://via.placeholder.com/400x200" alt="Course Image">
+                  <img src="https://placehold.co/400" alt="Course Image">
                 {% endif %}
                 <div class="card-body">
                   <h5 class="card-title">{{ course.course_title }}</h5>
-                  <p class="card-text text-muted">{{ course.instructor.user.user.username }}</p>
+                  <p class="text-muted">{{ course.description|truncatewords:15 }}</p>
+                  <p class="card-text text-muted">Instructor: {{ course.instructor.user.user.first_name }} {{ course.instructor.user.user.last_name }}</p>
                 </div>
               </div>
             </a>
@@ -113,7 +114,7 @@
   {% if role == "instructor" %}
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h4 class="mb-0">Your Courses</h4>
-      <a href="{% url 'create_course' %}" class="btn btn-success">Create Course</a>
+      <a href="{% url 'create_course' %}" class="btn btn-primary">Create Course</a>
     </div>
     
     {% if courses %}
@@ -129,6 +130,7 @@
                 {% endif %}
                 <div class="card-body">
                   <h5 class="card-title">{{ course.course_title }}</h5>
+                  <p class="text-muted">{{ course.description|truncatewords:15 }}</p>
                   <p class="card-text text-muted">{{ course.category }}</p>
                   <span class="badge bg-success">Active</span>
                 </div>
@@ -141,7 +143,6 @@
       <div class="text-center p-5 border rounded shadow-sm bg-light">
         <h5>No courses yet.</h5>
         <p class="text-muted">Create your first course and start teaching.</p>
-        <a href="{% url 'create_course' %}" class="btn btn-primary">Create Course</a>
       </div>
     {% endif %}
   {% endif %}

@@ -13,6 +13,21 @@
         <li class="nav-item">
           <a class="nav-link" href="{% url 'course_list' %}">Courses</a>
         </li>
+        {% if user.is_authenticated %}
+          {% if user_profile.role == "instructor" %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'create_course' %}">Create Course</a>
+            </li>
+          {% endif %}
+          {% if user_profile.role == "student" %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+            </li>
+          {% endif %}
+        {% endif %}
       </ul>
 
       <!-- Right -->
@@ -23,12 +38,15 @@
             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
                data-bs-toggle="dropdown" aria-expanded="false">
               {% if user_profile.profile_picture %}
-              <img src="{{ user_profile.profile_picture.url }}" 
-                     alt="Profile" class="rounded-circle me-2" width="30" height="30">
+                <img src="{{ user_profile.profile_picture.url }}" 
+                  alt="Profile"
+                  class="rounded-circle me-2"
+                  style="width: 30px; height: 30px; object-fit: cover; object-position: center;">
               {% else %}
-                <!-- Default placeholder image -->
                 <img src="https://placehold.co/30"
-                     alt="Profile" class="rounded-circle me-2" width="30" height="30">
+                  alt="Profile"
+                  class="rounded-circle me-2"
+                  style="width: 30px; height: 30px; object-fit: cover; object-position: center;">
               {% endif %}
 
 

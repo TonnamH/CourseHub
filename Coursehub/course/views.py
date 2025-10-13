@@ -4,13 +4,12 @@ from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from .forms import UserRegisterForm, ProfileForm, StudentProfileForm, InstructorProfileForm, CourseForm
 from django.contrib import messages
 from .models import *
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def home(request):
-    if request.user.is_authenticated:
-        return redirect('dashboard')
-    else:
-        courses = Courses.objects.all()[:4]
-        return render(request, 'home.html', {'courses': courses})   
+    user_profile = Users.objects.get(user=request.user) if request.user.is_authenticated else None
+    courses = Courses.objects.all()[:4]
+    return render(request, 'home.html', {'courses': courses, 'user_profile': user_profile})   
 
 
 
@@ -53,13 +52,28 @@ def user_dashboard(request):
 
 
 def course_list(request):
-    courses = Courses.objects.all()
+    courses = Courses.objects.all().order_by('id')
+    paginator = Paginator(courses, 8)
+    page_number = request.GET.get('page')
+
+    try:
+        page_obj = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
     if request.user.is_authenticated:
         user_profile = Users.objects.get(user=request.user)
     else:
         user_profile = None
-    return render(request, 'course_list.html', {'courses': courses , 'user_profile': user_profile})
 
+    context = {
+        'page_obj': page_obj,
+        'courses': page_obj,
+        'user_profile': user_profile,
+    }
+    return render(request, 'course_list.html', context)
 
 
 def course_detail(request, course_id):
@@ -203,6 +217,7 @@ def edit_profile(request):
 
 
 def create_course(request):
+    user_profile = Users.objects.get(user=request.user)
     if not hasattr(request.user, 'users') or request.user.users.role != 'instructor':
         messages.error(request, "Only instructors can create courses.")
         return redirect('dashboard')
@@ -220,7 +235,7 @@ def create_course(request):
     else:
         form = CourseForm()
 
-    return render(request, 'create_course.html', {'form': form})
+    return render(request, 'create_course.html', {'form': form, 'user_profile': user_profile})
 
 
 
@@ -288,3 +303,65 @@ def unenroll_course(request, course_id):
     enrollment.delete()
     messages.success(request, f"You have unenrolled from {course.course_title}.")
     return redirect('course_detail', course_id=course_id)
+
+
+
+def edit_course(request, course_id):
+    user_profile = Users.objects.get(user=request.user)
+    if user_profile.role != 'instructor':
+        messages.error(request, "Only instructors can edit courses.")
+        return redirect('dashboard')
+
+    instructor_profile = InstructorProfile.objects.get(user=user_profile)
+    course = get_object_or_404(Courses, pk=course_id, instructor=instructor_profile)
+
+    if request.method == 'POST':
+        form = CourseForm(request.POST, request.FILES, instance=course)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Course updated successfully!")
+            return redirect('course_detail', course_id=course.id)
+    else:
+        form = CourseForm(instance=course)
+
+    return render(request, 'edit_course.html', {'form': form, 'course': course, 'user_profile': user_profile})
+
+
+
+def delete_course(request, course_id):
+    user_profile = Users.objects.get(user=request.user)
+    if user_profile.role != 'instructor':
+        messages.error(request, "Only instructors can delete courses.")
+        return redirect('dashboard')
+
+    instructor_profile = InstructorProfile.objects.get(user=user_profile)
+    course = get_object_or_404(Courses, pk=course_id, instructor=instructor_profile)
+
+    if request.method == 'POST':
+        course.delete()
+        messages.success(request, "Course deleted successfully!")
+        return redirect('dashboard')
+
+    return render(request, 'delete_course.html', {'course': course, 'user_profile': user_profile})
+
+
+
+def enrolled_students(request, course_id):
+    user_profile = Users.objects.get(user=request.user)
+    if user_profile.role != 'instructor':
+        messages.error(request, "Only instructors can view enrolled students.")
+        return redirect('dashboard')
+
+    instructor_profile = InstructorProfile.objects.get(user=user_profile)
+    course = get_object_or_404(Courses, pk=course_id, instructor=instructor_profile)
+
+    enrollments = Enrollment.objects.filter(course=course).select_related('student__user')
+    students = [enrollment.student for enrollment in enrollments]
+
+    context = {
+        'course': course,
+        'students': students,
+        'user_profile': user_profile,
+    }
+    return render(request, 'enrolled_student.html', context)
+
