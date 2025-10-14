@@ -10,6 +10,16 @@
 <div class="shared-form-container">
   <h2>Add Course Content</h2>
 
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong>Error:</strong>
+      {% for error in form.non_field_errors %}
+        <div>{{ error }}</div>
+      {% endfor %}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endif %}
+  
   <form method="POST" class="needs-validation" novalidate>
     {% csrf_token %}
     {{ form.non_field_errors }}
@@ -18,21 +28,39 @@
     <div class="mb-3">
       <label class="form-label">Content Title</label>
       {{ form.title }}
-      {{ form.title.errors }}
+      {% if form.title.errors %}
+        <div class="text-danger small mt-1">
+          {% for error in form.title.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
 
     <!-- Content Type -->
     <div class="mb-3">
       <label class="form-label">Content Type</label>
       {{ form.content_type }}
-      {{ form.content_type.errors }}
+      {% if form.content_type.errors %}
+        <div class="text-danger small mt-1">
+          {% for error in form.content_type.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
 
     <!-- Content URL -->
     <div class="mb-3">
       <label class="form-label">Content URL</label>
       {{ form.content_url }}
-      {{ form.content_url.errors }}
+      {% if form.content_url.errors %}
+        <div class="text-danger small mt-1">
+          {% for error in form.content_url.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
 
     <!-- Buttons -->

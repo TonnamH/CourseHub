@@ -11,6 +11,14 @@
 <div class="shared-form-container">
   <h2>Edit Course Details</h2>
 
+  {% if form.fieldname.errors %}
+    <div class="text-danger small mt-1">
+      {% for error in form.fieldname.errors %}
+        {{ error }}
+      {% endfor %}
+    </div>
+  {% endif %}
+
   <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
     {% csrf_token %}
     {{ form.non_field_errors }}
@@ -19,28 +27,52 @@
     <div class="mb-3">
       <label class="form-label">Course Title</label>
       {{ form.course_title }}
-      {{ form.course_title.errors }}
+      {% if form.course_title.errors %}
+        <div class="text-danger small mt-1">
+          {% for error in form.course_title.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
 
     <!-- Category -->
     <div class="mb-3">
       <label class="form-label">Category</label>
       {{ form.category }}
-      {{ form.category.errors }}
+      {% if form.category.errors %}
+        <div class="text-danger small mt-1">
+          {% for error in form.category.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
 
     <!-- Description -->
     <div class="mb-3">
       <label class="form-label">Description</label>
       {{ form.description }}
-      {{ form.description.errors }}
+      {% if form.description.errors %}
+        <div class="text-danger small mt-1">
+          {% for error in form.description.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
 
     <!-- Course Image -->
     <div class="mb-3">
       <label class="form-label">Course Image</label>
       {{ form.course_image }}
-      {{ form.course_image.errors }}
+      {% if form.course_image.errors %}
+        <div class="text-danger small mt-1">
+          {% for error in form.course_image.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
 
       {% if course.course_image %}
         <div class="image-preview">

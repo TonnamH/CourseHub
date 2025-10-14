@@ -1,16 +1,28 @@
 {% extends 'base.html' %}
 {% load static %}
- %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/user_edit.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
   <h3 class="mb-4">Edit User: {{ user_to_edit.username }}</h3>
-
+  
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong>Error:</strong>
+      {% for error in form.non_field_errors %}
+        <div>{{ error }}</div>
+      {% endfor %}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endif %}
+  
   <form method="POST" enctype="multipart/form-data" class="p-4 bg-white rounded shadow-sm">
     {% csrf_token %}
     {{ form.non_field_errors }}
 
-    <!-- Loop through all form fields except profile picture -->
     {% for field in form %}
       {% if field.name != "profile_picture" %}
         <div class="mb-3">
@@ -23,11 +35,10 @@
       {% endif %}
     {% endfor %}
 
-    <!-- Profile Picture Preview + Input -->
+
     <div class="mb-3">
       <label class="form-label">Profile Picture</label><br>
-      
-      <!-- Show current picture -->
+
       {% if user_to_edit.profile_picture %}
         <img id="profilePreview" 
              src="{{ user_to_edit.profile_picture.url }}" 
@@ -35,13 +46,13 @@
              style="width: 120px; height: 120px; object-fit: cover; border-radius: 10px; margin-bottom: 10px;">
       {% else %}
         <img id="profilePreview" 
-             src="{% static 'images/default_profile.png' %}" 
+             src="https://placehold.co/400" 
              alt="No Picture" 
              style="width: 120px; height: 120px; object-fit: cover; border-radius: 10px; margin-bottom: 10px;">
       {% endif %}
       <br>
 
-      <!-- File input -->
+
       {{ form.profile_picture }}
 
       {% if form.profile_picture.errors %}
@@ -49,7 +60,6 @@
       {% endif %}
     </div>
 
-    <!-- Role Selection -->
     <div class="mb-3">
       <label class="form-label">Role</label>
       <select name="role" class="form-select">
