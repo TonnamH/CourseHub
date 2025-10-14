@@ -23,8 +23,8 @@ class Users(models.Model):
 
 class StudentProfile(models.Model):
     user = models.OneToOneField(Users, on_delete=models.CASCADE)
-    major = models.CharField(max_length=50)
-    year_of_study = models.PositiveIntegerField()
+    major = models.CharField(max_length=50, blank=True, null=True)
+    year_of_study = models.PositiveIntegerField(blank=True, null=True)
     courses = models.ManyToManyField('Courses', through='Enrollment')
 
     def __str__(self):
@@ -33,8 +33,8 @@ class StudentProfile(models.Model):
 
 class InstructorProfile(models.Model):
     user = models.OneToOneField(Users, on_delete=models.CASCADE)
-    department = models.CharField(max_length=100)
-    expertise = models.TextField()
+    department = models.CharField(max_length=100, blank=True, null=True)
+    expertise = models.TextField(max_length=300, blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.user.username} ({self.department})"
@@ -71,16 +71,9 @@ class CourseContent(models.Model):
 
 
 class Enrollment(models.Model):
-    STATUS = [
-        ('active', 'Active'),
-        ('completed', 'Completed'),
-        ('dropped', 'Dropped'),
-    ]
-
     student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE)
     course = models.ForeignKey(Courses, on_delete=models.CASCADE)
     enrolled_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=STATUS, default='active')
 
     def __str__(self):
         return f"{self.student.user.user.username} → {self.course.course_title} ({self.status})"
