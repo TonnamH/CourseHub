@@ -1,0 +1,77 @@
+/* Profile Picture */
+.profile-pic {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+}
+
+/* Card & Sidebar */
+.card {
+  border-radius: 12px;
+}
+
+.card-title {
+  font-weight: 600;
+}
+
+.list-group-item {
+  border: none;
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.list-group-item:hover {
+  background-color: #f8f9fa;
+  border-left: 3px solid #0d6efd;
+}
+
+.list-group-item.active {
+  background-color: #0d6efd;
+  color: #fff;
+  border-left: 3px solid #0a58ca;
+}
+
+/* Form Styling */
+form input,
+form select,
+form textarea {
+  width: 100%;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease-in-out;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+  border-color: #0d6efd;
+  outline: none;
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.btn {
+  border-radius: 8px;
+  padding: 8px 20px;
+}
+
+.alert {
+  border-radius: 10px;
+}
+
+/* Layout fixes */
+@media (max-width: 768px) {
+  .profile-pic {
+    max-width: 180px;
+  }
+}

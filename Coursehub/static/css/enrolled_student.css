@@ -1,0 +1,117 @@
+.course-banner {
+    position: relative;
+    height: 250px;
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+.course-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(60%);
+}
+
+.course-banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2rem 3rem;
+    color: #fff;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
+}
+
+.course-banner h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.course-banner p {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.students-section {
+    max-width: 1300px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.students-section h3 {
+    margin-bottom: 1.2rem;
+    border-left: 4px solid #2563eb;
+    padding-left: 0.75rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.students-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.student-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.student-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+.student-card img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.student-info h5 {
+    font-weight: 600;
+    margin: 0;
+}
+
+.student-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.no-students {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    margin-top: 2rem;
+}
+
+.back-btn {
+    display: inline-block;
+    background-color: #2563eb;
+    color: white;
+    border-radius: 30px;
+    padding: 8px 18px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background-color: #1e4ed8;
+}

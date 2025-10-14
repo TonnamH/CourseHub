@@ -1,0 +1,36 @@
+@import url('/static/css/course_list.css');
+
+.dashboard-wrapper {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.dashboard-header {
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+}
+
+.course-card img {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.course-card {
+    border-radius: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stats-card .card {
+    border-radius: 10px;
+}
+
+

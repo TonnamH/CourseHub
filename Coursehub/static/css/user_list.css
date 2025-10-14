@@ -1,0 +1,174 @@
+/* Wrapper */
+.user-list-wrapper,
+.course-list-wrapper {
+    margin: 1rem auto;
+    background: #fff;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Header */
+.user-list-header,
+.course-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.user-list-header h2,
+.course-list-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+thead {
+    background-color: #2563eb;
+    color: #fff;
+}
+
+th,
+td {
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid #eee;
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+th {
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-align: left;
+}
+
+/* Center the Actions column */
+th:last-child,
+td:last-child {
+    text-align: center;
+}
+
+/* Profile Image */
+.profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+/* Role Badges */
+.role-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.role-admin {
+    background: #2563eb;
+    color: white;
+}
+
+.role-instructor {
+    background: #16a34a;
+    color: white;
+}
+
+.role-student {
+    background: #f59e0b;
+    color: white;
+}
+
+/* Action Buttons Container */
+.action-buttons {
+    display: flex;
+    justify-content: center;   /* <-- Center all buttons */
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+/* Base button style */
+.btn-action,
+.action-buttons a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+/* View & Students Links */
+.btn-view {
+    background: transparent;
+    color: #0b5ed7;
+    padding: 4px 6px;
+}
+
+.btn-view:hover {
+    text-decoration: underline;
+}
+
+.btn-secondary {
+    background: #e9eefc;
+    color: #0b5ed7;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border: 1px solid rgba(11, 94, 215, 0.08);
+}
+
+.btn-secondary:hover {
+    filter: brightness(0.97);
+    transform: translateY(-1px);
+}
+
+/* Delete Button */
+.btn-delete {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(185, 28, 28, 0.08);
+}
+
+.btn-delete:hover {
+    background: #fecaca;
+    transform: translateY(-1px);
+}
+
+/* Edit Button (if reused) */
+.btn-edit {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.btn-edit:hover {
+    background: #bae6fd;
+}
+
+/* Empty state */
+.no-users,
+.no-courses {
+    text-align: center;
+    padding: 2rem;
+    color: #777;
+    font-style: italic;
+}
