@@ -42,14 +42,6 @@
           <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
-            {% if messages %}
-              {% for message in messages %}
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                  {{ message }}
-                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-              {% endfor %}
-            {% endif %}
 
             <!-- Shared fields -->
             <div class="mb-3">
