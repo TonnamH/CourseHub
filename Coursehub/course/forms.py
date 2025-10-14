@@ -180,3 +180,37 @@ class CourseContentForm(forms.ModelForm):
                 'placeholder': 'Paste content link (e.g. YouTube, Google Drive, etc.)',
             }),
         }
+
+
+class UserEditForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=30, required=False)
+    last_name = forms.CharField(max_length=30, required=False)
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = Users
+        fields = ['role', 'profile_picture']
+        widget = {
+            'role': forms.Select(attrs={'class': 'form-control'}),
+            'profile_picture': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        user_instance = kwargs.pop('user_instance', None)
+        super().__init__(*args, **kwargs)
+        if user_instance:
+            self.fields['first_name'].initial = user_instance.first_name
+            self.fields['last_name'].initial = user_instance.last_name
+            self.fields['email'].initial = user_instance.email
+
+    def save(self, commit=True):
+        users_instance = super().save(commit=False)
+        user_instance = users_instance.user
+        user_instance.first_name = self.cleaned_data.get('first_name', user_instance.first_name)
+        user_instance.last_name = self.cleaned_data.get('last_name', user_instance.last_name)
+        user_instance.email = self.cleaned_data.get('email', user_instance.email)
+
+        if commit:
+            user_instance.save()
+            users_instance.save()
+        return users_instance
