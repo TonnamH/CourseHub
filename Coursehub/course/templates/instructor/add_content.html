@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/form_pages.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="shared-form-container">
+  <h2>Add Course Content</h2>
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong>Error:</strong>
+      {% for error in form.non_field_errors %}
+        <div>{{ error }}</div>
+      {% endfor %}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endif %}
+  
+  <form method="POST" class="needs-validation" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <!-- Title -->
+    <div class="mb-3">
+      <label class="form-label">Content Title</label>
+      {{ form.title }}
+      {% if form.title.errors %}
+        <div class="text-danger small mt-1">
+          {% for error in form.title.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Content Type -->
+    <div class="mb-3">
+      <label class="form-label">Content Type</label>
+      {{ form.content_type }}
+      {% if form.content_type.errors %}
+        <div class="text-danger small mt-1">
+          {% for error in form.content_type.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Content URL -->
+    <div class="mb-3">
+      <label class="form-label">Content URL</label>
+      {{ form.content_url }}
+      {% if form.content_url.errors %}
+        <div class="text-danger small mt-1">
+          {% for error in form.content_url.errors %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary">Add Content</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

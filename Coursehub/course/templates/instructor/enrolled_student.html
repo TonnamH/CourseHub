@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static%}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/enrolled_student.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="students-section">
+  <!-- Course Banner -->
+  <div class="course-banner shadow-sm">
+    {% if course.course_image %}
+      <img src="{{ course.course_image.url }}" alt="{{ course.course_title }}">
+    {% else %}
+      <img src="https://via.placeholder.com/1200x400" alt="Course Banner">
+    {% endif %}
+    <div class="course-banner-overlay">
+      <h1>{{ course.course_title }}</h1>
+      <p>Viewing Enrolled Students</p>
+    </div>
+  </div>
+
+  <!-- Students List -->
+  <div class="course-section mt-4">
+    <h3>Enrolled Students ({{ students|length }})</h3>
+
+    {% if students %}
+      <div class="students-grid">
+        {% for student in students %}
+          <div class="student-card">
+            {% if student.user.profile_picture %}
+              <img src="{{ student.user.profile_picture.url }}" alt="Student Picture">
+            {% else %}
+              <img src="https://placehold.co/100" alt="Student Picture">
+            {% endif %}
+            <div class="student-info">
+              <h5>{{ student.user.user.first_name }} {{ student.user.user.last_name }}</h5>
+              <p>{{ student.user.user.email }}</p>
+              {% if student.major %}
+                <p><small>Major: {{ student.major }}</small></p>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="no-students">No students have enrolled in this course yet.</p>
+    {% endif %}
+
+    <div class="mt-4 text-center">
+      <a href="{% url 'dashboard' %}" class="back-btn">← Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

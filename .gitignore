@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+*.pyo
+*.pyd
+*.pdb
+*.log
+
+# Virtual environment
+myvenv/
+env/
+.venv/
+
+# Django stuff
+*.sqlite3
+db.sqlite3
+/media/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+
+
+# Course images (uploaded files)
+Coursehub/media/course_images/
+Coursehub/media/profiles/

@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body text-center">
+          {% if user_profile.profile_picture %}
+            <img src="{{ user_profile.profile_picture.url }}"
+                alt="Profile Picture"
+                class="rounded-circle mb-3"
+                style="width: 300px; height: 300px; object-fit: cover; object-position: center;">
+          {% else %}
+            <img src="https://placehold.co/200"
+                alt="Profile Picture"
+                class="rounded-circle mb-3"
+                style="width: 300px; height: 300px; object-fit: cover; object-position: center;">
+          {% endif %}
+          <h4 class="card-title mt-2">{{ user.first_name|default:user.username }}</h4>
+          <p class="text-muted">{{ user.email }}</p>
+          <p><span class="badge bg-primary text-capitalize">{{ user_profile.role }}</span></p>
+        </div>
+      </div>
+
+      <div class="list-group mt-4">
+        <a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action">Dashboard</a>
+        <a href="{% url 'view_profile' %}" class="list-group-item list-group-item-action">View Profile</a>
+        <a href="#" class="list-group-item list-group-item-action active">Edit Profile</a>
+        <a href="{% url 'change_password' %}" class="list-group-item list-group-item-action">Change Password</a>
+        <a href="{% url 'logout' %}" class="list-group-item list-group-item-action text-danger">Logout</a>
+      </div>
+    </div>
+
+    <!-- Main Form -->
+    <div class="col-md-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h4 class="card-title mb-4">Edit Profile</h4>
+
+          <!-- Display all form errors -->
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <strong>Error:</strong>
+              {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+              {% endfor %}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endif %}
+
+          {% if sub_form.non_field_errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <strong>Error:</strong>
+              {% for error in sub_form.non_field_errors %}
+                <div>{{ error }}</div>
+              {% endfor %}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endif %}
+
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Shared fields -->
+            <div class="mb-3">
+              <label class="form-label">Username</label>
+              {{ form.username }}
+              {% if form.username.errors %}
+                <div class="text-danger small mt-1">
+                  {% for error in form.username.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              {{ form.email }}
+              {% if form.email.errors %}
+                <div class="text-danger small mt-1">
+                  {% for error in form.email.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">First Name</label>
+              {{ form.first_name }}
+              {% if form.first_name.errors %}
+                <div class="text-danger small mt-1">
+                  {% for error in form.first_name.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Last Name</label>
+              {{ form.last_name }}
+              {% if form.last_name.errors %}
+                <div class="text-danger small mt-1">
+                  {% for error in form.last_name.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Bio</label>
+              {{ form.bio }}
+              {% if form.bio.errors %}
+                <div class="text-danger small mt-1">
+                  {% for error in form.bio.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Profile Picture</label><br>
+              {{ form.profile_picture }}
+              {% if form.profile_picture.errors %}
+                <div class="text-danger small mt-1">
+                  {% for error in form.profile_picture.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+            {% if role == 'student' %}
+              <hr>
+              <h5>Student Information</h5>
+              <div class="mb-3">
+                <label class="form-label">Major</label>
+                {{ sub_form.major }}
+                {% if sub_form.major.errors %}
+                  <div class="text-danger small mt-1">
+                    {% for error in sub_form.major.errors %}
+                      {{ error }}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Year of Study</label>
+                {{ sub_form.year_of_study }}
+                {% if sub_form.year_of_study.errors %}
+                  <div class="text-danger small mt-1">
+                    {% for error in sub_form.year_of_study.errors %}
+                      {{ error }}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+            {% elif role == 'instructor' %}
+              <hr>
+              <h5>Instructor Information</h5>
+              <div class="mb-3">
+                <label class="form-label">Department</label>
+                {{ sub_form.department }}
+                {% if sub_form.department.errors %}
+                  <div class="text-danger small mt-1">
+                    {% for error in sub_form.department.errors %}
+                      {{ error }}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Expertise</label>
+                {{ sub_form.expertise }}
+                {% if sub_form.expertise.errors %}
+                  <div class="text-danger small mt-1">
+                    {% for error in sub_form.expertise.errors %}
+                      {{ error }}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

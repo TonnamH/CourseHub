@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/course_list.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero / Banner Section -->
+        <div class="hero-banner" style="
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.3)),
+                        url('{% static "images/CourseHubBanner.jpg" %}') center/cover no-repeat;
+            height: 850px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;">
+        <div class="content">
+            <h1 class="display-4 fw-bold">Welcome to CourseHub</h1>
+            <p class="lead">Learn, teach, and grow — all in one place.</p>
+            <a href="{% url 'course_list' %}" class="btn btn-primary btn-lg mt-3">Browse Courses</a>
+        </div>
+        </div>
+
+<!-- Featured Courses -->
+<div class="container mb-5 mt-5">
+    <h2 class="mb-4 mt-4 text-center">Featured Courses</h2>
+
+    {% if courses %}
+    <div class="courses-grid featured-courses-grid">
+        {% for course in courses %}
+        <a href="{% url 'course_detail' course.id %}" class="course-link">
+            <div class="course-card">
+                {% if course.course_image %}
+                    <img src="{{ course.course_image.url }}" alt="Course Image">
+                {% else %}
+                    <img src="https://placehold.co/400x200" alt="Course Image">
+                {% endif %}
+                <div class="card-body">
+                    <h5>{{ course.course_title }}</h5>
+                    <p><small>Category: {{ course.category }}</small></p>
+                    <p><small>Description: {{ course.description|truncatewords:7 }}</small></p>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p class="text-center text-muted mt-4">No featured courses available right now.</p>
+    {% endif %}
+</div>
+
+<!-- About / Why Choose Us Section -->
+<div class="bg-light py-5 mb-5">
+    <div class="container text-center">
+        <h2 class="mb-4">Why Choose CourseHub?</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-3">
+                <img src="{% static 'images/expert.jpg' %}"
+                     class="mb-3" 
+                     alt="Expert Instructors"
+                     style="width: 300px; height: 300px; object-fit: cover;">
+                <h5>Expert Instructors</h5>
+                <p>Learn from industry professionals and passionate teachers.</p>
+            </div>
+            <div class="col-md-3">
+                <img src="{% static 'images/coding.jpg' %}"
+                     class="mb-3" 
+                     alt="Flexible Learning"
+                     style="width: 300px; height: 300px; object-fit: cover;">
+                <h5>Flexible Learning</h5>
+                <p>Study anytime, anywhere, and at your own pace.</p>
+            </div>
+            <div class="col-md-3">
+                <img src="{% static 'images/certificate.jpg' %}"
+                     class="mb-3" 
+                     alt="Certificates"
+                     style="width: 300px; height: 300px; object-fit: cover;">
+                <h5>Get Certified</h5>
+                <p>Earn certificates to boost your career and confidence.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if user.is_authenticated %}
+{% else %}
+<!-- Call to Action -->
+<div class="py-5 text-center bg-primary text-white">
+    <h2>Ready to start your learning journey?</h2>
+    <p class="lead">Join thousands of students today and unlock your potential.</p>
+    <a href="{% url 'register' %}" class="btn btn-light btn-lg mt-3">Sign Up Now</a>
+</div>
+{% endif %}
+
+{% endblock %}

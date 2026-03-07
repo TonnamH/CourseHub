@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/user_edit.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3 class="mb-4">Edit User: {{ user_to_edit.username }}</h3>
+  
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong>Error:</strong>
+      {% for error in form.non_field_errors %}
+        <div>{{ error }}</div>
+      {% endfor %}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endif %}
+  
+  <form method="POST" enctype="multipart/form-data" class="p-4 bg-white rounded shadow-sm">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    {% for field in form %}
+      {% if field.name != "profile_picture" %}
+        <div class="mb-3">
+          <label class="form-label">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}
+            <div class="text-danger small">{{ field.errors }}</div>
+          {% endif %}
+        </div>
+      {% endif %}
+    {% endfor %}
+
+
+    <div class="mb-3">
+      <label class="form-label">Profile Picture</label><br>
+
+      {% if user_to_edit.profile_picture %}
+        <img id="profilePreview" 
+             src="{{ user_to_edit.profile_picture.url }}" 
+             alt="Current Profile Picture" 
+             style="width: 120px; height: 120px; object-fit: cover; border-radius: 10px; margin-bottom: 10px;">
+      {% else %}
+        <img id="profilePreview" 
+             src="https://placehold.co/400" 
+             alt="No Picture" 
+             style="width: 120px; height: 120px; object-fit: cover; border-radius: 10px; margin-bottom: 10px;">
+      {% endif %}
+      <br>
+
+
+      {{ form.profile_picture }}
+
+      {% if form.profile_picture.errors %}
+        <div class="text-danger small">{{ form.profile_picture.errors }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Role</label>
+      <select name="role" class="form-select">
+        <option value="student" {% if user_to_edit.role == "student" %}selected{% endif %}>Student</option>
+        <option value="instructor" {% if user_to_edit.role == "instructor" %}selected{% endif %}>Instructor</option>
+        <option value="admin" {% if user_to_edit.role == "admin" %}selected{% endif %}>Admin</option>
+      </select>
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+      <a href="{% url 'user_list' %}" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
